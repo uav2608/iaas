@@ -1,5 +1,4 @@
 ---
-# KVM packages
 kvm_packages1: 
   - qemu
   - libvirt
@@ -17,4 +16,3 @@ kvm_packages1:
 kvm_packages2: 
   - 'http://linuxsoft.cern.ch/centos/8.1.1911/isos/x86_64/CentOS-8.1.1911-x86_64-dvd1.iso'
 
-#current_user : ansibleuser2

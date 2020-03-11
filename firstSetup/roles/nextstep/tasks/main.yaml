@@ -30,10 +30,6 @@
     package:
       name: "{{initial_packages_centos}}"
       state: present
-#    yum:
-#      name: "{{ item }}"
-#      state: present
-#    loop: "{{ initial_packages_centos }}"
 
   - name: Disallow root SSH access (Centos)
     lineinfile:
@@ -81,10 +77,6 @@
     package:
       name: "{{initial_package_debian}}"
       state: present
-#    apt:
-#      name: "{{ item }}"
-#      state: present
-#    loop: "{{ initial_packages_debian }}"
 
   - name: Disallow root SSH access (Debian)
     lineinfile:

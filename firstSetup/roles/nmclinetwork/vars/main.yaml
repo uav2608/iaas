@@ -17,8 +17,8 @@ nmcli_br:
   - type: bridge
     conn_name: my_br0
     ifname: br0
-    ip4: 192.168.1.246/24
-    gw4: 192.168.1.1
+    ip4: '192.168.1.246/24'
+    gw4: '192.168.1.1'
     autoconnect: yes
 
 #nmcli_br_slaves:
