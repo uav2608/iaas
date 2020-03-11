@@ -10,4 +10,4 @@
       src: /usr/local/packer
       dest: /usr/local/bin/packer.io
       state: link
-
+  ignore_errors: true

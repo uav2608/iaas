@@ -2,10 +2,13 @@
 - block:
 
   - name: Install Packages (Centos)
-    yum:
-      name: "{{ item }}"
+    package:
+      name: "{{kvm_packages1}}"
       state: present
-    loop: "{{ kvm_packages1 }}"
+#    yum:
+#      name: "{{ item }}"
+#      state: present
+#    loop: "{{ kvm_packages1 }}"
 
   when: ansible_os_family == "RedHat"
 
@@ -13,10 +16,14 @@
 - block:
 
   - name: Install Packages (Debian)
-    apt:
-      name: "{{ item }}"
+    package:
+      name: "{{kvm_packages1}}"
       state: present
-    loop: "{{ kvm_packages1 }}"
+
+#    apt:
+#      name: "{{ item }}"
+#      state: present
+#    loop: "{{ kvm_packages1 }}"
 
   when: ansible_os_family == "Debian"
 
@@ -33,7 +40,7 @@
       groups: libvirt
       append: yes
   loop:
-    - "{{ ansible_user }}"
+#    - "{{ ansible_user }}"
     - "{{ current_user }}"
 
 - name: Create folder for ISO
@@ -42,13 +49,13 @@
       path: ~/ISO
       state: directory
       mode: 0755
-      owner: "{{ ansible_user }}"
+      owner: "{{ current_user }}"
 
-- name: Download images
-  become: no
-  get_url: 
-      url: "{{ item }}"
-      dest: ~/ISO/
-      mode: '0666'
-  loop: "{{ kvm_packages2 }}" 
-
+#- name: Download images
+#  become: no
+#  get_url: 
+#      url: "{{ item }}"
+#      dest: ~/ISO/
+#      mode: '0666'
+#  loop: "{{ kvm_packages2 }}" 
+#  ignore_errors: true

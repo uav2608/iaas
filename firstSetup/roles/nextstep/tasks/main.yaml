@@ -19,7 +19,7 @@
       enabled: no
 
   - name: update the system (Centos)
-    raw: sudo yum update
+    raw: sudo yum update -y
     register: centosupdate_result
     changed_when: False
     until: centosupdate_result is success
@@ -27,10 +27,13 @@
     ignore_errors: yes
 
   - name: Install Packages (Centos)
-    yum:
-      name: "{{ item }}"
+    package:
+      name: "{{initial_packages_centos}}"
       state: present
-    loop: "{{ initial_packages_centos }}"
+#    yum:
+#      name: "{{ item }}"
+#      state: present
+#    loop: "{{ initial_packages_centos }}"
 
   - name: Disallow root SSH access (Centos)
     lineinfile:
@@ -75,10 +78,13 @@
       force_apt_get: True
 
   - name: Install Packages (Debian)
-    apt:
-      name: "{{ item }}"
+    package:
+      name: "{{initial_package_debian}}"
       state: present
-    loop: "{{ initial_packages_debian }}"
+#    apt:
+#      name: "{{ item }}"
+#      state: present
+#    loop: "{{ initial_packages_debian }}"
 
   - name: Disallow root SSH access (Debian)
     lineinfile:

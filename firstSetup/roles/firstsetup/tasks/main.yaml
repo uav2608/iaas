@@ -96,11 +96,11 @@
       path: /home/{{ current_user }}/.ssh/authorized_keys
       state: present
       line: "{{ auth_key_initial }}"
-      ignore_errors: yes
+  ignore_errors: True
 
 - name: Copy authorized_keys
   lineinfile:
       path: /home/{{ current_user }}/.ssh/authorized_keys
       state: present
       line: "{{ auth_key_second }}"
-      ignore_errors: yes
+  ignore_errors: True

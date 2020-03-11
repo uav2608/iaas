@@ -1,0 +1,27 @@
+required_packages:
+  - NetworkManager-glib
+  - nm-connection-editor
+  - libsemanage-python
+  - policycoreutils-python
+  - bridge-utils
+
+nmcli_eth:
+  - type: ethernet
+    conn_name: my_eth1
+    ifname: eth1
+    autoconnect: yes
+#    ip4: 10.11.12.239/24
+#    gw4: 10.11.12.1
+
+nmcli_br:
+  - type: bridge
+    conn_name: my_br0
+    ifname: br0
+    ip4: 192.168.1.246/24
+    gw4: 192.168.1.1
+    autoconnect: yes
+
+#nmcli_br_slaves:
+#  - conn_name: ens33
+#    ifname: ens33
+#    master: br0

@@ -1,13 +1,13 @@
 ---
-- name: Download and unarchive packer
+- name: Download and unarchive terraform
   unarchive:
-      src: https://releases.hashicorp.com/packer/{{packer_version}}/packer_{{packer_version}}_linux_amd64.zip
+      src: https://releases.hashicorp.com/terraform/{{terraform_version}}/terraform_{{terraform_version}}_linux_amd64.zip
       dest: /usr/local
       remote_src: yes
 
-- name: Create link to packer
+- name: Create link to terraform
   file:
-      src: /usr/local/packer
-      dest: /usr/local/bin/packer.io
+      src: /usr/local/terraform
+      dest: /usr/local/bin/terraform
       state: link
-
+  ignore_errors: true

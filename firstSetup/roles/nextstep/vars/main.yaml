@@ -12,7 +12,6 @@ initial_packages_centos:
   - rsync
   - nmap
   - policycoreutils-python
-  - yum-cron
   - openssh
   - openssh-clients
   - openssl-libs

@@ -6,20 +6,21 @@
   become_method: su
   become_user: root
   roles: 
-    - role: firstsetup
-      vars: 
-        host_name: kvmhost
-        current_user: kvm-host1
+    - firstsetup
+#     vars: 
+#        host_name: kvmmain
+#        current_user: kvm-host
     
-#- hosts: 127.0.0.1
-
-#  connection: local
-#  gather_facts: yes
-#  become: true
-
-#  roles:
-#    - nextstep
-#    - packer
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: yes
+  become: true
+  roles:
+    - nextstep
+    - packer
+    - terraform
+    - kvm
+    - nmclinetwork
 #    - python3
 #    - pip
 #    - role: mynetwork

@@ -4,3 +4,6 @@ P                              : A0909!
 net_interface_device_name      : "ens37"
 static_ip_addr                 : "192.168.61.130"
 static_gateway                 : "192.168.61.1"
+current_user                   : "kvm-host"
+host_name                      : "kvmmain"
+
