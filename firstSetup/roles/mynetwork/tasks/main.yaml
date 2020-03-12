@@ -1,41 +1,44 @@
 ---
-- name: Create static IP for Centos
-  template:
-    src: "static_ip2.j2"
-    dest: /etc/sysconfig/network-scripts/ifcfg-{{ interface_device_name }}
-    owner: root
-    group: root
-    mode: 0644
-  notify: Reboot network
+- block:
+  - name: Create static IP for Centos
+    template:
+#when no bridge network created, use static_ip2.j2  
+      src: "static_ip.j2"
+      dest: /etc/sysconfig/network-scripts/ifcfg-{{ interface_device_name }}
+      owner: root
+      group: root
+      mode: 0644
+    notify: Reboot network
 
-#- name: Create static Bridge network for Centos
-#  template:
-#    src: "bridge.j2"
-#    dest: /etc/sysconfig/network-scripts/ifcfg-{{ bridge_device_name }}
-#    owner: root
-#    group: root
-#    mode: 0644
-#  notify: Reboot network
+  - name: Create static Bridge network for Centos
+    template:
+      src: "bridge.j2"
+      dest: /etc/sysconfig/network-scripts/ifcfg-{{ bridge_device_name }}
+      owner: root
+      group: root
+      mode: 0644
+    notify: Reboot network
 
   when: ansible_os_family == 'RedHat' 
 
-- name: Create static IP for Debian
-  template:
-    src: "static_ip2.j2"
-    dest: "/etc/network/interfaces"
-    owner: root
-    group: root
-    mode: 0644
-  notify: Reboot networking
+- block:
+  - name: Create static IP for Debian
+    template:
+      src: "static_ip2.j2"
+      dest: "/etc/network/interfaces"
+      owner: root
+      group: root
+      mode: 0644
+    notify: Reboot networking
 
-#- name: Create static Bridge network for Debian
-#  template:
-#    src: "bridge.j2"
-#    dest: "/etc/network/interfaces"
-#    owner: root
-#    group: root
-#    mode: 0644
-#  notify: Reboot network
+  - name: Create static Bridge network for Debian
+    template:
+      src: "bridge.j2"
+      dest: "/etc/network/interfaces"
+      owner: root
+      group: root
+      mode: 0644
+    notify: Reboot network
 
   when: ansible_os_family == 'Debian' 
 

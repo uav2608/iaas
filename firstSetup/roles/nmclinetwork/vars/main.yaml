@@ -10,8 +10,7 @@ nmcli_eth:
     conn_name: my_eth1
     ifname: eth1
     autoconnect: yes
-#    ip4: 10.11.12.239/24
-#    gw4: 10.11.12.1
+    master: my_br0
 
 nmcli_br:
   - type: bridge
