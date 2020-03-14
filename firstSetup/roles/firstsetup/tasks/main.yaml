@@ -45,42 +45,16 @@
       name: sshd
       enabled: yes
 
+  - name: Deploy SSH Key
+    authorized_key:
+       user: "{{ current_user }}"
+       key: "{{ item }}"
+       state: present
+    with_items:
+       - "{{ auth_key_initial }}"
+       - "{{ auth_key_second }}"
+
   when: ansible_os_family == 'RedHat'
-
-
-- block:
-  - name: Make sure to have Sudo group (Debian)
-    group:
-      name: sudo
-      state: present
-
-  - name: Add user to Sudo group (Debian)
-    user:
-      name: "{{ current_user }}"
-      groups: sudo
-
-  - name: Update sudoer file (Debian)
-    lineinfile:
-      path: /etc/sudoers
-      state: present
-      regexp: '^%sudo\s'
-      line: '%sudo ALL=(ALL) NOPASSWD: ALL'
-      validate: '/usr/sbin/visudo -cf %s'
-
-  - name: Enable SSH (Debian)
-    service:
-      name: ssh
-      enabled: yes
-
-  when: ansible_os_family == 'Debian'
-
-- name: Deploy SSH Key
-     authorized_key: user=devops
-       key="{{ item }}"
-       state=present
-     with_item:
-       - {{ auth_key_initial }}
-       - {{ auth_key_second }}
 
 - block:
   - name: Add multiple repositories into the same file (1/2) (Centos)
@@ -112,6 +86,11 @@
     package:
       name: "{{initial_packages_centos}}"
       state: present
+    register: centosPackages_result
+    changed_when: False
+    until: centosPackages_result is success
+    retries: 2
+    ignore_errors: yes
 
   - name: Disallow root SSH access (Centos)
     lineinfile:
@@ -142,8 +121,44 @@
 
   when: ansible_os_family == "RedHat"
 
+
 - block:
- - name: update the system (Debian)
+  - name: Make sure to have Sudo group (Debian)
+    group:
+      name: sudo
+      state: present
+
+  - name: Add user to Sudo group (Debian)
+    user:
+      name: "{{ current_user }}"
+      groups: sudo
+
+  - name: Update sudoer file (Debian)
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%sudo\s'
+      line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+      validate: '/usr/sbin/visudo -cf %s'
+
+  - name: Enable SSH (Debian)
+    service:
+      name: ssh
+      enabled: yes
+
+  - name: Deploy SSH Key
+    authorized_key:
+       user: "{{ current_user }}"
+       key: "{{ item }}"
+       state: present
+    with_items:
+       - "{{ auth_key_initial }}"
+       - "{{ auth_key_second }}"
+
+  when: ansible_os_family == 'Debian'
+
+- block:
+  - name: update the system (Debian)
     raw: sudo apt-get update -y
     register: debianupdate_result
     changed_when: False
@@ -190,6 +205,15 @@
     notify: Restart ssh
 
   when: ansible_os_family == "Debian"
+
+#- name: Deploy SSH Key
+#  authorized_key:
+#     user: "{{ current_user }}"
+#     key: "{{ item }}"
+#     state: present
+#  with_items:
+#     - "{{ auth_key_initial }}"
+#     - "{{ auth_key_second }}"
 
 #- name: create a .ssh directory if it doesn't exist
 #  file:

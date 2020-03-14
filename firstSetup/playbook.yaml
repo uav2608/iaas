@@ -6,10 +6,10 @@
   become_method: su
   become_user: root
   roles: 
-    - firstsetup
+    - role: firstsetup
       vars: 
         host_name: kvmmain
-        current_user: kvm-host
+        current_user: kvm-main
     
 #- hosts: 127.0.0.1
 #  connection: local
