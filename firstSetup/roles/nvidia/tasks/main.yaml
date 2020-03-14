@@ -1,0 +1,32 @@
+---
+
+- name: Install Packages (Centos)
+  package:
+    name: "{{ driver_packages }}"
+    state: present
+
+- name: Create folder for Driver
+  become: no
+  file:
+      path: ~/Downloads
+      state: directory
+      mode: 0755
+      owner: "{{ current_user }}"
+
+- name: Download images
+  become: no
+  get_url: 
+      url: "{{ item }}"
+      dest: ~/Downloads/
+      mode: '0666'
+  loop: "{{ nvidia_driver }}" 
+  ignore_errors: true
+
+- name: Update GRUB file (Centos)
+  lineinfile:
+      path: /etc/default/grub
+      regexp: '^(GRUB_CMDLINE_LINUX(?!.*nouveau.modeset=0).*)"$'
+      line: '\1 nouveau.modeset=0"'
+      backrefs: yes 
+      backup: yes
+  

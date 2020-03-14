@@ -4,28 +4,6 @@
     name: "{{ required_packages }}"
     state: present
 
-- name: configure_network | add bridge
-  nmcli:
-    type: bridge
-    conn_name: my_br0
-    ifname: br0
-    ip4: 192.168.1.246/24
-    gw4: 192.168.1.1
-    autoconnect: yes
-    state: present
-
-#    type: "{{ item.type }}"
-#    conn_name: "{{ item.conn_name }}"
-#    ifname: "{{ item.ifname }}"
-#    ip4: "{{ item.ip4 }}"
-#    gw4: "{{ item.gw4 }}"
-#    autoconnect: "{{ item.autoconnect }}"
-#    state: present
-  register: bridge
-#  with_items:
-#    - "{{ nmcli_br }}"
-  ignore_errors: True
-
 - name: configure_network | add ethernet
   nmcli:
     type: "{{ item.type }}"
@@ -38,7 +16,33 @@
   with_items:
     - "{{ nmcli_eth }}"
   ignore_errors: True
-  
+
+- name: configure_network | add ethernet for bridge
+  nmcli:
+    type: "{{ item.type }}"
+    conn_name: "{{ item.conn_name }}"
+    ifname: "{{ item.ifname }}"
+    state: present
+  register: ether
+  with_items:
+    - "{{ nmcli_br_eth }}"
+  ignore_errors: True
+
+
+- name: configure_network | add bridge
+  nmcli:
+    type: "{{ item.type }}"
+    conn_name: "{{ item.conn_name }}"
+    ifname: "{{ item.ifname }}"
+    ip4: "{{ item.ip4 }}"
+    gw4: "{{ item.gw4 }}"
+    autoconnect: "{{ item.autoconnect }}"
+    state: present
+  register: bridge
+  with_items:
+    - "{{ nmcli_br }}"
+  ignore_errors: True
+
 - name: debug
   debug:
     var: bridge

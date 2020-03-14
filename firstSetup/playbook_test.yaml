@@ -1,0 +1,19 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: yes
+  become: true
+  vars:
+     - current_user: kvm-main
+
+
+  tasks:
+  
+  - name: Update GRUB file (Centos)
+    lineinfile:
+      path: /etc/default/grub
+      regexp: '^(GRUB_CMDLINE_LINUX(?!.*nouveau.modeset=0).*)"$'
+      line: '\1 nouveau.modeset=0"'
+      backrefs: yes
+#      state: present
+      backup: yes 

@@ -15,6 +15,8 @@
   connection: local
   gather_facts: yes
   become: true
+  vars:
+     - current_user: kvm-main
   roles:
     - kvm
     - role: packer
@@ -27,14 +29,16 @@
       vars:
         compiled_python_version: 3.8.2
     - pip
-#    - nmclinetwork
-#    - role: mynetwork
-#      vars:
-#        network_addr: 192.168.1.1/24
+    - role: mynetwork
+      vars:
+        network_addr: 192.168.1.1/24
+        bridge_device_name: 'virbr0'
+    - nvidia 
 ##    - role: linux_desktop
 ##      vars:
 ##        linux_desktop: xfce
-   
+#    - nmclinetwork
+       
 
   tasks:
 
@@ -54,8 +58,8 @@
     debug:
       msg: "{{ terraform_info.stdout }}"
 
-  - name: debuging python3
-    shell: python3.7 --version  
+  - name: debuging python3 #check above the python3 version
+    shell: python3.8 --version  
     register: python3_info
 
   - name: python3-info
@@ -71,9 +75,11 @@
       msg: "{{ pip3_info.stdout }}"
 
   - debug:
-      msg: "{{ interface_device_name }}"
-
-  - debug:
       msg: "{{ static_ip_addr }}"
 
+  - name: reloading GRUB to install nvidia driver 
+    shell: grub2-mkconfig -o /boot/grub2/grub.cfg
+
+  - debug:
+      msg: "Reboot and run bash NVIDIA-Linux-x86_64-* in ~/Downloads"
 

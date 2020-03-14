@@ -12,6 +12,11 @@ nmcli_eth:
     autoconnect: yes
     master: my_br0
 
+nmcli_br_eth:
+  - type: ethernet
+    conn_name: my_br0
+    ifname: br0
+
 nmcli_br:
   - type: bridge
     conn_name: my_br0
