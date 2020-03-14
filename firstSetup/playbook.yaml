@@ -11,56 +11,69 @@
         host_name: kvmmain
         current_user: kvm-main
     
-#- hosts: 127.0.0.1
-#  connection: local
-#  gather_facts: yes
-#  become: true
-#  roles:
-#    - nextstep
-#    - packer
-#    - terraform
-#    - kvm
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: yes
+  become: true
+  roles:
+    - kvm
+    - role: packer
+      vars:
+        packer_version: 1.5.4
+    - role: terraform
+      vars:
+        terraform_version: 0.12.23
+    - role: python3
+      vars:
+        compiled_python_version: 3.8.2
+    - pip
 #    - nmclinetwork
-##    - python3
-##    - pip
 #    - role: mynetwork
 #      vars:
 #        network_addr: 192.168.1.1/24
 ##    - role: linux_desktop
 ##      vars:
 ##        linux_desktop: xfce
-##    - kvm   
+   
 
-#  tasks:
+  tasks:
 
-#  - name: debuging packer
-#    shell: /usr/local/packer --version
-#    register: packer_info
+  - name: debuging packer
+    shell: /usr/local/packer --version
+    register: packer_info
 
-#  - name: packer-info
-#    debug:
-#      msg: "{{ packer_info.stdout }}"
+  - name: packer-info
+    debug:
+      msg: "{{ packer_info.stdout }}"
 
-#  - name: debuging python3
-#    shell: python3.7 --version  
-#    register: python3_info
+  - name: debuging terraform
+    shell: /usr/local/terraform --version
+    register: terraform_info
 
-#  - name: python3-info
-#    debug:
-#      msg: "{{ python3_info.stdout }}"
+  - name: terraform-info
+    debug:
+      msg: "{{ terraform_info.stdout }}"
 
-#  - name: debuging pip3
-#    shell: pip3.7 --version
-#    register: pip3_info
+  - name: debuging python3
+    shell: python3.7 --version  
+    register: python3_info
 
-#  - name: pip3-info
-#    debug:
-#      msg: "{{ pip3_info.stdout }}"
+  - name: python3-info
+    debug:
+      msg: "{{ python3_info.stdout }}"
 
-#  - debug:
-#      msg: "{{ interface_device_name }}"
+  - name: debuging pip3
+    shell: pip3.7 --version
+    register: pip3_info
 
-#  - debug:
-#      msg: "{{ static_ip_addr }}"
+  - name: pip3-info
+    debug:
+      msg: "{{ pip3_info.stdout }}"
+
+  - debug:
+      msg: "{{ interface_device_name }}"
+
+  - debug:
+      msg: "{{ static_ip_addr }}"
 
 
