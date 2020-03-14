@@ -3,6 +3,7 @@
 - name: Add user
   user:
       name: "{{ current_user }}"
+      shell: /bin/bash
       password: '$6$mysecretsalt$UKHPm2CYG4.4QOaQZ1DddpDyuXKdQf72jMbV7EckI.tKeTRE6kX5nS0ibvvYnlGeARyaEoC9XU8jAeWJAAkcL.'
 
 - block:
@@ -48,7 +49,6 @@
 
 
 - block:
-
   - name: Make sure to have Sudo group (Debian)
     group:
       name: sudo
@@ -74,33 +74,149 @@
 
   when: ansible_os_family == 'Debian'
 
+- name: Deploy SSH Key
+     authorized_key: user=devops
+       key="{{ item }}"
+       state=present
+     with_item:
+       - {{ auth_key_initial }}
+       - {{ auth_key_second }}
 
-- name: create a .ssh directory if it doesn't exist
-  file:
-      path:  /home/{{ current_user }}/.ssh
-      state: directory
-      owner: "{{ current_user }}"
-      group: "{{ current_user }}"
-      mode: 0700
+- block:
+  - name: Add multiple repositories into the same file (1/2) (Centos)
+    yum_repository:
+      name: epel
+      description: EPEL YUM repo
+      file: external_repos
+      baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+      gpgcheck: no
 
-- name: create file
-  file:
-      path: /home/{{ current_user }}/.ssh/authorized_keys
-      state: touch
-      owner: "{{ current_user }}"
-      group: "{{ current_user }}"
-      mode: 0644
+  - name: Add multiple repositories into the same file (2/2) (Centos)
+    yum_repository:
+      name: rpmforge
+      description: RPMforge YUM repo
+      file: external_repos
+      baseurl: http://apt.sw.be/redhat/el7/en/$basearch/rpmforge
+      mirrorlist: http://mirrorlist.repoforge.org/el7/mirrors-rpmforge
+      enabled: no
 
-- name: Copy authorized_keys
-  lineinfile:
-      path: /home/{{ current_user }}/.ssh/authorized_keys
+  - name: update the system (Centos)
+    raw: sudo yum update -y
+    register: centosupdate_result
+    changed_when: False
+    until: centosupdate_result is success
+    retries: 5
+    ignore_errors: yes
+
+  - name: Install Packages (Centos)
+    package:
+      name: "{{initial_packages_centos}}"
       state: present
-      line: "{{ auth_key_initial }}"
-  ignore_errors: True
 
-- name: Copy authorized_keys
-  lineinfile:
-      path: /home/{{ current_user }}/.ssh/authorized_keys
+  - name: Disallow root SSH access (Centos)
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin\s'
+      line: 'PermitRootLogin no'
       state: present
-      line: "{{ auth_key_second }}"
-  ignore_errors: True
+      backup: yes
+    notify: Restart sshd
+
+  - name: Disallow empty passwords (Centos)
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitEmptyPasswords\s'
+      line: 'PermitEmptyPasswords no'
+      state: present
+      backup: yes
+    notify: Restart sshd
+
+  - name: Disallow password authentication (Centos)
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PasswordAuthentication\s'
+      line: 'PasswordAuthentication no'
+      state: present
+      backup: yes
+    notify: Restart sshd
+
+  when: ansible_os_family == "RedHat"
+
+- block:
+ - name: update the system (Debian)
+    raw: sudo apt-get update -y
+    register: debianupdate_result
+    changed_when: False
+    until: debianupdate_result is success
+    retries: 5
+    ignore_errors: yes
+
+  - name: upgrade the system (Debian)
+    apt:
+      name: "*"
+      state: latest
+      force_apt_get: True
+
+  - name: Install Packages (Debian)
+    package:
+      name: "{{initial_package_debian}}"
+      state: present
+
+  - name: Disallow root SSH access (Debian)
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin\s'
+      line: 'PermitRootLogin no'
+      state: present
+      backup: yes
+    notify: Restart ssh
+
+  - name: Disallow empty passwords (Debian)
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitEmptyPasswords\s'
+      line: 'PermitEmptyPasswords no'
+      state: present
+      backup: yes
+    notify: Restart ssh
+
+  - name: Disallow password authentication (Debian)
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PasswordAuthentication\s'
+      line: 'PasswordAuthentication no'
+      state: present
+      backup: yes
+    notify: Restart ssh
+
+  when: ansible_os_family == "Debian"
+
+#- name: create a .ssh directory if it doesn't exist
+#  file:
+#      path:  /home/{{ current_user }}/.ssh
+#      state: directory
+#      owner: "{{ current_user }}"
+#      group: "{{ current_user }}"
+#      mode: 0700
+
+#- name: create file
+#  file:
+#      path: /home/{{ current_user }}/.ssh/authorized_keys
+#      state: touch
+#      owner: "{{ current_user }}"
+#      group: "{{ current_user }}"
+#      mode: 0644
+
+#- name: Copy authorized_keys
+#  lineinfile:
+#      path: /home/{{ current_user }}/.ssh/authorized_keys
+#      state: present
+#      line: "{{ auth_key_initial }}"
+#  ignore_errors: True
+
+#- name: Copy authorized_keys
+#  lineinfile:
+#      path: /home/{{ current_user }}/.ssh/authorized_keys
+#      state: present
+#      line: "{{ auth_key_second }}"
+#  ignore_errors: True
