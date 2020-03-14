@@ -1,21 +1,21 @@
 ---
-#- hosts: 127.0.0.1
-#  connection: local
-#  gather_facts: yes
-#  become: true
-#  become_method: su
-#  become_user: root
-#  roles: 
-#    - firstsetup
-##     vars: 
-##        host_name: kvmmain
-##        current_user: kvm-host
-    
 - hosts: 127.0.0.1
   connection: local
   gather_facts: yes
   become: true
-  roles:
+  become_method: su
+  become_user: root
+  roles: 
+    - firstsetup
+      vars: 
+        host_name: kvmmain
+        current_user: kvm-host
+    
+#- hosts: 127.0.0.1
+#  connection: local
+#  gather_facts: yes
+#  become: true
+#  roles:
 #    - nextstep
 #    - packer
 #    - terraform
@@ -23,9 +23,9 @@
 #    - nmclinetwork
 ##    - python3
 ##    - pip
-    - role: mynetwork
-      vars:
-        network_addr: 192.168.1.1/24
+#    - role: mynetwork
+#      vars:
+#        network_addr: 192.168.1.1/24
 ##    - role: linux_desktop
 ##      vars:
 ##        linux_desktop: xfce
