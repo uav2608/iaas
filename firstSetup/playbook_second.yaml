@@ -3,18 +3,6 @@
   connection: local
   gather_facts: yes
   become: true
-  become_method: su
-  become_user: root
-  roles: 
-    - role: firstsetup
-      vars: 
-        host_name: kvmmain
-        current_user: kvm-main
-    
-- hosts: 127.0.0.1
-  connection: local
-  gather_facts: yes
-  become: true
   vars:
      - current_user: kvm-main
   roles:
