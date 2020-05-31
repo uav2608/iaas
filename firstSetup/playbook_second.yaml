@@ -6,68 +6,79 @@
   vars:
      - current_user: kvm-main
   roles:
-    - kvm
-    - role: packer
-      vars:
-        packer_version: 1.5.6
-    - role: terraform
-      vars:
+     - kvm
+     - role: go
+       vars:
+         go_version: 1.6
+     - role: packer
+       vars:
+         packer_version: 1.5.6
+     - role: terraform
+       vars:
         terraform_version: 0.12.26
-    - role: python3
-      vars:
-        compiled_python_version: 3.8.2
-    - pip
+     - role: python3
+       vars:
+         compiled_python_version: 3.8.2
+     - pip
+     - nvidia
+     - nmclinetwork
 ##    - role: mynetwork
 ##      vars:
 ##        network_addr: 192.168.1.1/24
 ##        bridge_device_name: 'virbr0'
-    - nvidia 
 ##    - role: linux_desktop
 ##      vars:
 ##        linux_desktop: xfce
-#    - nmclinetwork
        
 
   tasks:
 
-  - name: debuging packer
-    shell: /usr/local/packer --version
-    register: packer_info
+   - name: debuging packer
+     shell: /usr/local/packer --version
+     register: packer_info
 
-  - name: packer-info
-    debug:
-      msg: "{{ packer_info.stdout }}"
+   - name: packer-info
+     debug:
+       msg: "{{ packer_info.stdout }}"
 
-  - name: debuging terraform
-    shell: /usr/local/terraform --version
-    register: terraform_info
+   - name: debuging terraform
+     shell: /usr/local/terraform --version
+     register: terraform_info
 
-  - name: terraform-info
-    debug:
-      msg: "{{ terraform_info.stdout }}"
+   - name: terraform-info
+     debug:
+       msg: "{{ terraform_info.stdout }}"
 
-  - name: debuging python3 #check above the python3 version
-    shell: python3.8 --version  
-    register: python3_info
+   - name: debuging go
+     shell: go version
+     register: go_info
 
-  - name: python3-info
-    debug:
-      msg: "{{ python3_info.stdout }}"
+   - name: go-info
+     debug:
+       msg: "{{ go_info.stdout }}"
 
-  - name: debuging pip3
-    shell: pip3.7 --version
-    register: pip3_info
+   - name: debuging python3 #check above the python3 version
+     shell: python3.8 --version  
+     register: python3_info
 
-  - name: pip3-info
-    debug:
-      msg: "{{ pip3_info.stdout }}"
+   - name: python3-info
+     debug:
+       msg: "{{ python3_info.stdout }}"
+
+   - name: debuging pip3
+     shell: pip3.8 --version
+     register: pip3_info
+
+   - name: pip3-info
+     debug:
+       msg: "{{ pip3_info.stdout }}"
 
 ##  - debug:
 ##      msg: "{{ static_ip_addr }}"
 
-  - name: reloading GRUB to install nvidia driver 
-    shell: grub2-mkconfig -o /boot/grub2/grub.cfg
+   - name: reloading GRUB to install nvidia driver 
+     shell: grub2-mkconfig -o /boot/grub2/grub.cfg
 
-  - debug:
-      msg: "Reboot and run bash NVIDIA-Linux-x86_64-* in ~/Downloads"
+   - debug:
+       msg: "Reboot and run bash NVIDIA-Linux-x86_64-* in ~/Downloads"
 

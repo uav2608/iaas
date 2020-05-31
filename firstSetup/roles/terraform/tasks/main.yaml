@@ -11,3 +11,25 @@
       dest: /usr/local/bin/terraform
       state: link
   ignore_errors: true
+
+- name: Create folder for Terraform plugins
+  become: no
+  file:
+      path: /home/{{current_user}}/.terraform.d/plugins
+      state: directory
+      mode: 0755
+      owner: "{{ current_user }}"
+
+- name: Download and unarchive terraform-provider-libvirt
+  unarchive:
+      src: https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/{{ terraform_libvirt_version }}.tar.gz
+      dest: /home/{{current_user}}/.terraform.d/plugins 
+      remote_src: yes
+
+- name: Create folder for Terraform project
+  become: no
+  file:
+      path: /home/{{current_user}}/terraform_projects
+      state: directory
+      mode: 0755
+      owner: "{{ current_user }}"

@@ -1,0 +1,39 @@
+---
+- name: Download and unarchive go
+  unarchive:
+      src: https://storage.googleapis.com/golang/go{{go_version}}.linux-amd64.tar.gz 
+      dest: /usr/local
+      remote_src: yes
+
+- name: Adding the path in the bashrc files
+  lineinfile: 
+      path: /home/{{current_user}}/.bashrc 
+      state: present
+      line: 'export PATH=$PATH:/usr/local/go/bin' 
+      insertafter: 'EOF' 
+      create: yes
+
+- name: Create Workspace
+  become: no
+  file:
+      path: /home/{{ current_user }}/ws_go
+      state: directory
+      mode: 0755
+      owner: "{{ current_user }}"
+
+- name: Set $GOPATH 1
+  lineinfile:
+      path: /home/{{current_user}}/.bashrc
+      state: present
+      line: 'export GOPATH=$HOME/ws_go'
+      insertafter: 'EOF'
+      create: yes
+
+- name: Set $GOPATH 2
+  lineinfile:
+      path: /home/{{current_user}}/.bashrc
+      state: present
+      line: 'export PATH=$PATH:$GOPATH/bin'
+      insertafter: 'EOF'
+      create: yes
+
