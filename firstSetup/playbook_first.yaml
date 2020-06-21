@@ -8,7 +8,7 @@
   roles: 
     - role: firstsetup
       vars: 
-        host_name: kvmmain
-        current_user: kvm-main
+        host_name: centos7_python
+        current_user: centos7_python
     
 

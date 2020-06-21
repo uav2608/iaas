@@ -1,0 +1,33 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: yes
+  become: true
+  vars:
+     - current_user: kvm-main
+  roles:
+     - role: python3
+       vars:
+         compiled_python_version: 3.8.2
+     - pip
+       
+
+  tasks:
+
+   - name: debuging python3 #check above the python3 version
+     shell: python3.8 --version  
+     register: python3_info
+
+   - name: python3-info
+     debug:
+       msg: "{{ python3_info.stdout }}"
+
+   - name: debuging pip3
+     shell: pip3.8 --version
+     register: pip3_info
+
+   - name: pip3-info
+     debug:
+       msg: "{{ pip3_info.stdout }}"
+
+
