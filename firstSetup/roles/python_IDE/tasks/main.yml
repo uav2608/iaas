@@ -1,15 +1,18 @@
 ---
 # tasks file for python_IDE
 
-- rpm_key:
-    state: present
-    key: https://packages.microsoft.com/keys/microsoft.asc
+#- rpm_key:
+#    state: present
+#    key: {{ visual_studio_code_mirror }}/keys/microsoft.asc
 
 - name: Add vscode repository
   yum_repository:
     name: vscode
     description: Visual Studio Code YUM repo
-    baseurl: https://packages.microsoft.com/yumrepos/vscode/
+    file: vscode
+    baseurl: '{{ visual_studio_code_mirror }}/yumrepos/vscode/'
+    gpgkey: '{{ visual_studio_code_mirror }}/keys/microsoft.asc'
+    gpgcheck: yes
 
 - name: install the latest version of Visual Studio Code
   yum:
