@@ -10,7 +10,7 @@
        vars:
          compiled_python_version: 3.8.2
      - pip
-       
+     - python_IDE  
 
   tasks:
 
